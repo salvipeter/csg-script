@@ -1,0 +1,12 @@
+*~
+
+csg-script
+
+Makefile
+*.o
+moc_*
+qrc_*
+*.stash
+
+*.obj
+*.xml
