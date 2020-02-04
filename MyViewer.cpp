@@ -684,11 +684,8 @@ void MyViewer::mouseMoveEvent(QMouseEvent *e) {
 }
 
 QString MyViewer::helpString() const {
-  QString text("<h2>Sample Framework</h2>"
-               "<p>This is a minimal framework for 3D mesh manipulation, which can be "
-               "extended and used as a base for various projects, for example "
-               "prototypes for fairing algorithms, or even displaying/modifying "
-               "parametric surfaces, etc.</p>"
+  QString text("<h2>CSG Testbed</h2>"
+               "<p>This is a scripting testbed for CSG modeling.</p>"
                "<p>The following hotkeys are available:</p>"
                "<ul>"
                "<li>&nbsp;R: Reload model</li>"
@@ -706,19 +703,6 @@ QString MyViewer::helpString() const {
                "<li>&nbsp;W: Toggle wireframe visualization</li>"
                "<li>&nbsp;F: Fair mesh</li>"
                "</ul>"
-               "<p>There is also a simple selection and movement interface, enabled "
-               "only when the wireframe/controlnet is displayed: a mesh vertex can be selected "
-               "by shift-clicking, and it can be moved by shift-dragging one of the "
-               "displayed axes. Pressing ctrl enables movement in the screen plane.</p>"
-               "<p>Note that libQGLViewer is furnished with a lot of useful features, "
-               "such as storing/loading view positions, or saving screenshots. "
-               "OpenMesh also has a nice collection of tools for mesh manipulation: "
-               "decimation, subdivision, smoothing, etc. These can provide "
-               "good comparisons to the methods you implement.</p>"
-               "<p>This software can be used as a sample GUI base for handling "
-               "parametric or procedural surfaces, as well. The power of "
-               "Qt and libQGLViewer makes it easy to set up a prototype application. "
-               "Feel free to modify and explore!</p>"
                "<p align=\"right\">Peter Salvi</p>");
   return text;
 }
