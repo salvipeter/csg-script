@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <QtGui/QKeyEvent>
+#include <QMessageBox>
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Tools/Smoother/JacobiLaplaceSmootherT.hh>
@@ -366,11 +367,33 @@ void MyViewer::setupCamera() {
   update();
 }
 
+SCM safeLoad(void *data) {
+  scm_c_primitive_load(reinterpret_cast<std::string *>(data)->c_str());
+  return SCM_UNSPECIFIED;
+}
+
+SCM errorHandler(void *, SCM key, SCM args) {
+  auto display_fun = scm_c_public_ref("guile", "display");
+  key = scm_object_to_string(key, display_fun);
+  args = scm_object_to_string(args, display_fun);
+  char *key_str = scm_to_stringn(key, nullptr, "UTF-8", SCM_FAILED_CONVERSION_QUESTION_MARK);
+  char *args_str = scm_to_stringn(args, nullptr, "UTF-8", SCM_FAILED_CONVERSION_QUESTION_MARK);
+  QString text = QString("Exception key: ") + key_str + "\n" + args_str;
+  QMessageBox::critical(MyViewer::getInstance(), "Script Error", text);
+  free(args_str);
+  free(key_str);
+  return SCM_UNSPECIFIED;
+}
+
+SCM dummyHandler(void *, SCM, SCM) {
+  return SCM_UNSPECIFIED;
+}
+
 bool MyViewer::loadScript(const std::string &filename, bool update_view) {
   mesh.clean();
 
-  // TODO: exception handling
-  scm_c_primitive_load(filename.c_str());
+  scm_c_catch(SCM_BOOL_T, safeLoad, reinterpret_cast<void *>(const_cast<std::string *>(&filename)),
+              errorHandler, nullptr, dummyHandler, nullptr);
 
   if (mesh.n_vertices() == 0)
     return false;
