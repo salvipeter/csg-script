@@ -378,8 +378,14 @@ SCM errorHandler(void *, SCM key, SCM args) {
   args = scm_object_to_string(args, display_fun);
   char *key_str = scm_to_stringn(key, nullptr, "UTF-8", SCM_FAILED_CONVERSION_QUESTION_MARK);
   char *args_str = scm_to_stringn(args, nullptr, "UTF-8", SCM_FAILED_CONVERSION_QUESTION_MARK);
-  QString text = QString("Exception key: ") + key_str + "\n" + args_str;
+  auto port = scm_open_output_string();
+  auto stack = scm_make_stack(SCM_BOOL_T, SCM_EOL);
+  scm_display_backtrace(stack, port, SCM_BOOL_F, SCM_BOOL_F);
+  auto bt = scm_get_output_string(port);
+  char *bt_str = scm_to_stringn(bt, nullptr, "UTF-8", SCM_FAILED_CONVERSION_QUESTION_MARK);
+  QString text = QString("Exception type: ") + key_str + "\n" + args_str + "\nBacktrace:\n" + bt_str;
   QMessageBox::critical(MyViewer::getInstance(), "Script Error", text);
+  free(bt_str);
   free(args_str);
   free(key_str);
   return SCM_UNSPECIFIED;
@@ -393,7 +399,7 @@ bool MyViewer::loadScript(const std::string &filename, bool update_view) {
   mesh.clean();
 
   scm_c_catch(SCM_BOOL_T, safeLoad, reinterpret_cast<void *>(const_cast<std::string *>(&filename)),
-              errorHandler, nullptr, dummyHandler, nullptr);
+              dummyHandler, nullptr, errorHandler, nullptr);
 
   if (mesh.n_vertices() == 0)
     return false;
