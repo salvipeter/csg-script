@@ -29,8 +29,8 @@ MyWindow::MyWindow(QApplication *parent) :
   openAction->setStatusTip(tr("Load a script from a file"));
   connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
 
-  auto saveAction = new QAction(tr("&Save as.."), this);
-  saveAction->setStatusTip(tr("Save the current mesh to a file"));
+  auto saveAction = new QAction(tr("&Export..."), this);
+  saveAction->setStatusTip(tr("Export the current mesh to a file"));
   connect(saveAction, SIGNAL(triggered()), this, SLOT(save()));
 
   auto quitAction = new QAction(tr("&Quit"), this);
