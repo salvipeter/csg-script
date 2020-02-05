@@ -39,14 +39,20 @@ static SCM showIsosurface(SCM fun, SCM bbox, SCM res) {
   };
 
   DualContouring::Point3D box_min, box_max;
-  std::array<size_t, 3> resolution;
   auto bbox0 = scm_list_ref(bbox, scm_from_uint(0));
   auto bbox1 = scm_list_ref(bbox, scm_from_uint(1));
   for (size_t i = 0; i < 3; ++i) {
     box_min[i] = scm_to_double(scm_list_ref(bbox0, scm_from_uint(i)));
     box_max[i] = scm_to_double(scm_list_ref(bbox1, scm_from_uint(i)));
-    resolution[i] = scm_to_uint(scm_list_ref(res, scm_from_uint(i)));
   }
+
+  auto axis = box_max - box_min;
+  double axis_len = std::sqrt(axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]);
+  double axis_delta = axis_len / scm_to_uint(res) / std::sqrt(3);
+  std::array<size_t, 3> resolution;
+  resolution[0] = std::max<size_t>((size_t)std::ceil(axis[0] / axis_delta), 2);
+  resolution[1] = std::max<size_t>((size_t)std::ceil(axis[1] / axis_delta), 2);
+  resolution[2] = std::max<size_t>((size_t)std::ceil(axis[2] / axis_delta), 2);
 
   auto quadmesh = DualContouring::isosurface(f, 0, { box_min, box_max }, resolution);
   MyViewer::getInstance()->addQuads(quadmesh);
