@@ -10,3 +10,5 @@ qrc_*
 
 *.obj
 *.xml
+
+examples/test.scm
