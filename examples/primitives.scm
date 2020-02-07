@@ -1,3 +1,5 @@
+(use-modules (srfi srfi-1))
+
 (define (sphere center radius)
   (lambda (p)
     (- (point-distance p center) radius)))
@@ -29,8 +31,10 @@
            (cyl (cylinder cylp (cross-product dir normal) radius-small)))
       (cyl p))))
 
-(define (ellipsoid focus1 focus2 length)
+(define (focoid foci length)
   (lambda (p)
-    (- (+ (point-distance p focus1)
-          (point-distance p focus2))
+    (- (fold + 0
+             (map (lambda (focus)
+                    (point-distance p focus))
+                  foci))
        length)))
