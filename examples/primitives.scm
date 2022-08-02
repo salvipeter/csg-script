@@ -2,7 +2,7 @@
   (lambda (p)
     (- (point-distance p center) radius)))
 
-(define (plane point normal)
+(define (halfspace point normal)
   (lambda (p)
     (scalar-product (v- p point) normal)))
 
@@ -18,7 +18,7 @@
     (if (= (point-distance p apex) 0)
         0
         (let* ((u (vnormalize (v- p apex)))
-               (alpha (acos (abs (scalar-product u direction)))))
+               (alpha (acos (min 1 (abs (scalar-product u direction))))))
           (- (/ (* 180 alpha) (angle -1)) aperture)))))
 
 (define (torus center normal radius-large radius-small)
