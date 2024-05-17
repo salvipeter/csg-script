@@ -13,6 +13,6 @@ SOURCES = MyWindow.cpp MyViewer.cpp main.cpp
 QMAKE_CXXFLAGS += -O3
 
 INCLUDEPATH += /usr/include/eigen3 $${QGL} $${DC}
-LIBS += -L$${QGL}/QGLViewer -lQGLViewer-qt6 -L/usr/lib/OpenMesh -lOpenMeshCore -lGL -lGLU -L$${DC}/build -ldualcontour
+LIBS += -L$${QGL}/QGLViewer -lQGLViewer-qt6 -L/usr/lib/OpenMesh -lOpenMeshCore -lGL -lGLU -L$${DC}/build -ldualcontour -lomp
 
 RESOURCES = csg-script.qrc
