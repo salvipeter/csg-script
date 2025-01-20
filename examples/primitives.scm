@@ -38,3 +38,11 @@
                     (point-distance p focus))
                   foci))
        length)))
+
+;;; Simple primitives in standard position
+
+(define (rhomboid p)
+  (- (apply + (map abs p)) 1))
+
+(define (cube p)
+  (- (apply max (map abs p)) 1))
