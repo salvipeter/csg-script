@@ -6,6 +6,7 @@
 #include <QGLViewer/qglviewer.h>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 #include <dc.hh>
+#include <marching.hh>
 
 using qglviewer::Vec;
 
@@ -29,6 +30,7 @@ public:
   inline void setSlicingScaling(double scaling);
   bool loadScript(const std::string &filename, bool update_view);
   bool saveMesh(const std::string &filename);
+  void addTriangles(const Geometry::TriMesh &trimesh);
   void addQuads(const DualContouring::QuadMesh &quadmesh);
 
 signals:
