@@ -20,4 +20,6 @@
        (sp2 (sphere '(0 10 0) 5))
        (sp3 (sphere '(0 0 10) 5))
        (trebol (union (intersection blend pl1 pl2 pl3) sp sp1 sp2 sp3)))
-  (show trebol '((-20 -20 -20) (20 20 20)) 40))
+  ;(show trebol '((-20 -20 -20) (20 20 20)) 40)
+  (mc trebol '(0 0 0) 20 '(3 7))
+  )
