@@ -73,7 +73,7 @@ static SCM mcIsosurface(SCM fun, SCM center, SCM size, SCM depth) {
   auto min_depth = scm_to_int(scm_list_ref(depth, scm_from_uint(0)));
   auto max_depth = scm_to_int(scm_list_ref(depth, scm_from_uint(1)));
 
-  auto trimesh = isosurface(f, p, r, min_depth, max_depth);
+  auto trimesh = MarchingCubes::isosurface(f, p, r, min_depth, max_depth);
   MyViewer::getInstance()->addTriangles(trimesh);
   return SCM_UNSPECIFIED;
 }
@@ -91,7 +91,7 @@ static SCM blIsosurface(SCM fun, SCM center, SCM size, SCM res) {
   auto r = scm_to_double(size);
   auto resolution = scm_to_int(res);
 
-  auto trimesh = isosurface(f, p, r, resolution);
+  auto trimesh = Polygonizer::isosurface(f, p, r, resolution, false);
   MyViewer::getInstance()->addTriangles(trimesh);
   return SCM_UNSPECIFIED;
 }
