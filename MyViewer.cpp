@@ -78,6 +78,24 @@ static SCM mcIsosurface(SCM fun, SCM center, SCM size, SCM depth) {
   return SCM_UNSPECIFIED;
 }
 
+static SCM blIsosurface(SCM fun, SCM center, SCM size, SCM res) {
+  auto f = [&](const Geometry::Point3D &p) {
+    auto point = scm_list_3(scm_from_double(p[0]), scm_from_double(p[1]), scm_from_double(p[2]));
+    auto result = scm_call_1(fun, point);
+    return scm_to_double(result);
+  };
+
+  Geometry::Point3D p;
+  for (size_t i = 0; i < 3; ++i)
+    p[i] = scm_to_double(scm_list_ref(center, scm_from_uint(i)));
+  auto r = scm_to_double(size);
+  auto resolution = scm_to_int(res);
+
+  auto trimesh = isosurface(f, p, r, resolution);
+  MyViewer::getInstance()->addTriangles(trimesh);
+  return SCM_UNSPECIFIED;
+}
+
 MyViewer::MyViewer(QWidget *parent) :
   QGLViewer(parent),
   mean_min(0.0), mean_max(0.0), cutoff_ratio(0.05),
@@ -95,6 +113,7 @@ MyViewer::MyViewer(QWidget *parent) :
   scm_init_guile();
   scm_c_define_gsubr("show", 3, 0, 0, reinterpret_cast<void *>(showIsosurface));
   scm_c_define_gsubr("mc", 4, 0, 0, reinterpret_cast<void *>(mcIsosurface));
+  scm_c_define_gsubr("bl", 4, 0, 0, reinterpret_cast<void *>(blIsosurface));
 }
 
 MyViewer::~MyViewer() {

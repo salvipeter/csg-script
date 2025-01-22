@@ -7,12 +7,13 @@ which uses [Qt](http://qt-project.org/) and [OpenMesh](http://www.openmesh.org/)
 while tessellation is done with my
 [dual contouring library](http://github.com/salvipeter/dual-contouring).
 Alternative tessellation is done with my
-[marching cubes library](http://github.com/salvipeter/marching).
+[marching cubes library](http://github.com/salvipeter/marching) or a
+[wrapper on Jules Bloomenthal's polygonizer](https://github.com/salvipeter/polygonizer).
 Scripting support is added via [Guile](http://www.gnu.org/software/guile/).
 
 # Usage
 
-The only extra commands are `show` and `mc`. The original display function was `show`,
+The only extra commands are `show`, `mc` and `bl`. The original display function was `show`,
 which uses a kind of dual contouring:
 
 ```scheme
@@ -30,5 +31,11 @@ Alternatively, `mc` uses marching cubes:
 This tessellates the surface in a regular axis-aligned box centered at `bbox-center`,
 and having edges of length `2*radius`. Evaluation is adaptive, with the given
 minimum and maximum `depth` values.
+
+Finally, Bloomenthal's polygonizer has a very similar API:
+
+```scheme
+(bl <distance-function> <bbox-center> <radius> <resolution>)
+```
 
 See `example.scm` for an example.

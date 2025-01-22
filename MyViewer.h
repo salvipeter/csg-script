@@ -5,8 +5,10 @@
 
 #include <QGLViewer/qglviewer.h>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
+
 #include <dc.hh>
 #include <marching.hh>
+#include <polygonizer.hh>
 
 using qglviewer::Vec;
 
