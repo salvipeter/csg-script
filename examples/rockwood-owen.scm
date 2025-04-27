@@ -1,0 +1,83 @@
+(load "vectors.scm")                    ; basic vector operations
+
+;;; Safely descale the vector: return (0 0 0) when dividing by 0
+(define (v/ u x)
+  (if (< (abs x) 1e-8)
+      '(0 0 0)
+      (v* u (/ x))))
+
+;;; Primitives returning (value . gradient)
+
+(define (halfspace point normal)
+  (let ((n (vnormalize normal)))
+    (lambda (p)
+      (cons (scalar-product (v- p point) n) n))))
+
+(define (sphere center radius)
+  (lambda (p)
+    (let* ((d (v- p center))
+           (r (vlength d)))
+      (cons (- r radius) (v/ d r)))))
+
+(define (cylinder point direction radius)
+  (let ((dir (vnormalize direction)))
+    (lambda (p)
+      (let* ((u (v- p point))
+             (d (vlength (v- u (v* dir (scalar-product u dir)))))
+             (r (vlength d)))
+        (cons (- r radius) (v/ d r))))))
+
+;;; Combinators
+
+;;; The Rockwood-Owen approximative rolling ball blend
+(define (blend f1 f2 r)
+  (lambda (p)
+    (let* ((fx1 (f1 p))
+           (fx2 (f2 p))
+           (P1 (car fx1))
+           (P2 (car fx2))
+           (cos-theta (scalar-product (v/ (cdr fx1) (vlength (cdr fx1)))
+                                      (v/ (cdr fx2) (vlength (cdr fx2)))))
+           (sin-theta (sqrt (- 1 (* cos-theta cos-theta))))
+           (d1 (- r (* (- r P2) cos-theta)))
+           (d2 (- r (* (- r P1) cos-theta))))
+      (cons (if (and (< P1 d1) (< P2 d2)) ; on R
+                (if (< (abs sin-theta) 1e-8)
+                    0                   ; kutykurutty
+                    (- r (/ (sqrt (+ (* (- r P1) (- r P1))
+                                     (* (- r P2) (- r P2))
+                                     (* -2 (- r P1) (- r P2) cos-theta)))
+                            sin-theta)))
+                (min P1 P2))
+            '(0 0 0)))))                ; kutykurutty
+
+(define (complement f)
+  (lambda (p)
+    (let ((fx (f p)))
+      (cons (- (car fx))
+            (v* (cdr fx) -1)))))
+
+(define (union . fs)
+  (lambda (p)
+    (let ((fx ((car fs) p)))
+      (if (null? (cdr fs))
+          fx
+          (let ((best ((apply union (cdr fs)) p)))
+            (if (< (car fx) (car best))
+                fx
+                best))))))
+
+(define (value f)
+  (lambda (p)
+    (car (f p))))
+
+;;; Test example
+
+(define h1 (halfspace '(0 0 0) '(1 0 0)))
+(define h2 (halfspace '(0 0 0) '(2 3 0)))
+(define s1 (sphere '(0 0 0) 0.4))
+(define surface (blend h1 s1 0.4))
+
+;;; Meshing
+
+(mc (value surface) '(0 0 0) 2 '(4 7))
